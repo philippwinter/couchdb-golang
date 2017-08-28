@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"github.com/mohae/deepcopy"
 )
 
 // Row represents a row returned by database views.
@@ -245,7 +246,7 @@ func NewViewDefinition(design, name, mapFun, reduceFun, language string, wrapper
 
 // View executes the view definition in the given database.
 func (vd *ViewDefinition) View(db *Database, options map[string]interface{}) (*ViewResults, error) {
-	opts := deepCopy(options)
+	opts := deepcopy.Copy(options).(map[string]interface{})
 	for k, v := range vd.options {
 		opts[k] = v
 	}
@@ -310,7 +311,7 @@ func SyncMany(db *Database, viewDefns []*ViewDefinition, removeMissing bool, cal
 		if err != nil {
 			doc = map[string]interface{}{"_id": docID}
 		}
-		origDoc := deepCopy(doc)
+		origDoc := deepcopy.Copy(doc)
 		languages := map[string]bool{}
 
 		missing := map[string]bool{}
@@ -370,10 +371,3 @@ func SyncMany(db *Database, viewDefns []*ViewDefinition, removeMissing bool, cal
 	return db.Update(docs, nil)
 }
 
-func deepCopy(src map[string]interface{}) map[string]interface{} {
-	dst := map[string]interface{}{}
-	for k, v := range src {
-		dst[k] = v
-	}
-	return dst
-}
