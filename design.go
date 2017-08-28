@@ -248,7 +248,7 @@ func NewViewDefinition(design, name, mapFun, reduceFun, language string, wrapper
 
 // View executes the view definition in the given database.
 func (vd *ViewDefinition) View(db *Database, options map[string]interface{}) (*ViewResults, error) {
-	opts := deepcopy.Copy(options).(map[string]interface{})
+	opts := deepCopyMap(options)
 	for k, v := range vd.options {
 		opts[k] = v
 	}
@@ -313,7 +313,7 @@ func SyncMany(db *Database, viewDefns []*ViewDefinition, removeMissing bool, cal
 		if err != nil {
 			doc = map[string]interface{}{"_id": docID}
 		}
-		origDoc := deepcopy.Copy(doc)
+		origDoc := deepCopyMap(doc)
 		languages := map[string]bool{}
 
 		missing := map[string]bool{}
@@ -373,3 +373,10 @@ func SyncMany(db *Database, viewDefns []*ViewDefinition, removeMissing bool, cal
 	return db.Update(docs, nil)
 }
 
+func deepCopyMap(src map[string]interface{}) map[string]interface{} {
+	if src == nil {
+		return make(map[string]interface{})
+	}
+
+	return deepcopy.Copy(src).(map[string]interface{})
+}
