@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/leesper/couchdb-golang"
+	"github.com/philippwinter/couchdb-golang"
 )
 
 type tuple struct {
