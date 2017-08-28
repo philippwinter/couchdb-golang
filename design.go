@@ -152,9 +152,11 @@ func (vr *ViewResults) fetch() ([]Row, error) {
 	}
 
 	var totalRows float64
-	json.Unmarshal(*jsonMap["total_rows"], &totalRows)
+	if totalRows, ok := jsonMap["total_rows"]; ok {
+		json.Unmarshal(*jsonMap["total_rows"], &totalRows)
+	}
 	vr.totalRows = int(totalRows)
-
+	
 	if offsetRaw, ok := jsonMap["offset"]; ok {
 		var offset float64
 		json.Unmarshal(*offsetRaw, &offset)
